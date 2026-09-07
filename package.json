@@ -1,0 +1,25 @@
+{
+  "name": "ELStickels-SLP.github.io",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:ELStickels-SLP/ELStickels-SLP.github.io.git",
+  "author": "Daisy Dobler <daisy@dobler.dev>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && esbuild src/index.ts --bundle --outfile=www/index.js --format=iife --platform=browser",
+    "build:all": "./build.sh --build"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.17.25",
+    "@types/three": "^0.185.4",
+    "lodash": "^4.18.1",
+    "three": "^0.185.1",
+    "typescript": "^6.0.3",
+    "uuid": "^14.0.2",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}
