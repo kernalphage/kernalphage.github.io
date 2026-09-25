@@ -17,9 +17,11 @@ export class Game {
     readonly renderer: THREE.WebGLRenderer;
     readonly camera: Camera;
     readonly material: THREE.Material;
-    readonly world:VoxelWorld
+    readonly world: VoxelWorld
 
     readonly save = new SaveGame();
+
+    private curTick = 0;
 
     constructor() {
 
@@ -61,8 +63,8 @@ export class Game {
         });
 
         this.world = new VoxelWorld(this.scene, this.material);
-        
-        
+
+
         const components = [this.canvas, this.log_elem]
         this.log(components.every((e) => !!e) ? "All elements loaded" : components)
 
@@ -86,14 +88,17 @@ export class Game {
         const rect = this.canvas.getBoundingClientRect();
         this.renderer.setSize(rect.width, rect.height, false);
 
-        this.render();
+        this.render(0);
     }
 
-    render() {
-        const rect = this.canvas.getBoundingClientRect();
-        this.camera.resizeCanvas(rect);
+    render(time:number) {
+        let dt = time - this.curTick;
+        this.curTick = time;
+   const rect = this.canvas.getBoundingClientRect();
+        this.camera.update(dt, rect);
 
         this.renderer.render(this.scene, this.camera.camera);
+        requestAnimationFrame(this.render.bind(this))
     }
 
 

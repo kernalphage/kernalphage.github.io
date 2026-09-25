@@ -11,4 +11,10 @@ export const Globals = {
     cellSize: 16,
     InputManager: new InputManager(),
     Spritesheet: new Spritesheet(16, 246, 64),
+
+    camera: {
+        accell: 0.001,
+        speed: .4,
+        friction: 0.9,
+    }
 }
