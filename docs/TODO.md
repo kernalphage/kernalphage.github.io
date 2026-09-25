@@ -18,32 +18,31 @@ I want to be able to click on a tile, place a 'miner' down, refresh the page, an
 That 'miner' should generate a resource, which can  be collected and used to make more miners. 
 
 ## Basics 
-- Render Loop
-  - Basic canvas resize
-  - basic 
-- Compiler eval loop
-  - As good as it can get without a browser callback
++ Render Loop
+  + Basic canvas resize
++ Compiler eval loop
+  + As good as it can get without a browser callback
 
 ## Save Game
-- save and load from cookies
++ save and load from cookies
 - save and load from clipboard
 - Save game type 
   - migrations
   - initializers
 
 ## Interactions
-- Camera
-  - movement
++ Camera
+  + movement
     - click and drag
-    - WASD drag
-    - mousewheel zoom
+    + WASD drag
+    + mousewheel zoom
   - infinite scroll
     - 9 slice centered around camera? (could be 7 slice with hexes)
   
 ## Gameplay loop 
 - Terrain generation 
   - seeded? Editable and saveable? 
-- Hover to highlight  
++ Hover to highlight  
 - Game object creation
   - game object definitions
 - Research
