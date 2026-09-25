@@ -7,6 +7,7 @@ import { randInt } from 'three/src/math/MathUtils.js';
 import { Camera } from './Camera';
 import { SaveGame } from './SaveGame';
 import { Spritesheet } from './Spritesheet';
+import { Pointer } from './Pointer';
 const { cellSize } = Globals;
 
 export class Game {
@@ -16,8 +17,8 @@ export class Game {
     readonly scene: THREE.Scene;
     readonly renderer: THREE.WebGLRenderer;
     readonly camera: Camera;
-    readonly material: THREE.Material;
-    readonly world: VoxelWorld
+    private pointer:Pointer;
+    private world!: VoxelWorld
 
     readonly save = new SaveGame();
 
@@ -36,33 +37,28 @@ export class Game {
         // renderer.setAnimationLoop(animate);
 
         this.camera = new Camera(20);
+        Globals.activeCamera = this.camera;
 
-        // const fLoader = new FontLoader();
-        // font = await fLoader.loadAsync("resources/optimer_regular.typeface.json")
+        this.pointer = new Pointer();
 
 
         this.scene = new THREE.Scene();
         this.scene.add(new THREE.AmbientLight());
-
-        const loader = new THREE.TextureLoader();
-        const texture = loader.load('resources/flourish-cc-by-nc-sa.png', (dat) => {
-            Globals.Spritesheet = new Spritesheet(16, dat.height, dat.width);
-            this.renderCells();
-            this.world.updateCellGeometry(0, 0);
-            requestAnimationFrame(this.render.bind(this))
-        });
-        texture.magFilter = THREE.NearestFilter;
-        texture.minFilter = THREE.NearestFilter;
-        texture.colorSpace = THREE.LinearSRGBColorSpace;
-        this.material = new THREE.MeshLambertMaterial({ map: texture, side: THREE.DoubleSide, alphaTest: 0.1, transparent: false });
-
+        this.scene.add(this.pointer.ptr.mesh);
+        
         this.gizmo();
         this.resizeCanvas();
         window.addEventListener('resize', () => {
             this.resizeCanvas();
         });
 
-        this.world = new VoxelWorld(this.scene, this.material);
+        Globals.Spritesheet = new Spritesheet(16, () => {
+            this.world = new VoxelWorld(this.scene, Globals.Spritesheet.material);
+            this.renderCells();
+            this.world.updateCellGeometry(0, 0);
+        
+            requestAnimationFrame(this.render.bind(this))
+        });
 
 
         const components = [this.canvas, this.log_elem]
@@ -94,8 +90,10 @@ export class Game {
     render(time:number) {
         let dt = time - this.curTick;
         this.curTick = time;
-   const rect = this.canvas.getBoundingClientRect();
+        
+        const rect = this.canvas.getBoundingClientRect();
         this.camera.update(dt, rect);
+        this.pointer.update(dt);
 
         this.renderer.render(this.scene, this.camera.camera);
         requestAnimationFrame(this.render.bind(this))
