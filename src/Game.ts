@@ -16,8 +16,7 @@ export class Game {
     readonly renderer: THREE.WebGLRenderer;
     readonly camera: Camera;
     readonly material: THREE.Material;
-    readonly world = new VoxelWorld(Globals.cellSize, 16, 256, 64);
-    readonly cellIdToMesh: Record<string, THREE.Mesh> = {};
+    readonly world:VoxelWorld
 
     readonly save = new SaveGame();
 
@@ -55,9 +54,10 @@ export class Game {
             this.resizeCanvas();
         });
 
+        this.world = new  VoxelWorld(16, 256, 64, this.scene, this.material);
         this.renderCells();
-        this.updateCellGeometry(0, 0);
-
+        this.world.updateCellGeometry(0, 0);
+        
         const components = [this.canvas, this.log_elem]
         this.log(components.every((e) => !!e) ? "All elements loaded" : components)
 
@@ -87,51 +87,13 @@ export class Game {
     render() {
         const rect = this.canvas.getBoundingClientRect();
         this.camera.resizeCanvas(rect);
-        this.updateCellGeometry(0, 0);
 
         this.renderer.render(this.scene, this.camera.camera);
     }
 
-    updateVoxelGeometry(x: number, y: number, z: number) {
-        const updatedCellIds: Record<string, boolean> = {};
-        for (const offset of neighborOffsets) {
-            const ox = x + offset[0];
-            const oy = y + offset[1];
-            const cellId = this.world.computeCellId(ox, oy);
-            if (!updatedCellIds[cellId]) {
-                updatedCellIds[cellId] = true;
-                this.updateCellGeometry(ox, oy);
 
-            }
-        }
-    }
 
-    updateCellGeometry(x: number, y: number) {
 
-        const cellX = Math.floor(x / cellSize);
-        const cellY = Math.floor(y / cellSize);
-        const cellId = this.world.computeCellId(x, y);
-        let mesh = this.cellIdToMesh[cellId];
-
-        const geometry = mesh ? mesh.geometry : new THREE.BufferGeometry();
-        const { positions, normals, uvs, indices } = this.world.generateGeoForCell(cellX, cellY);
-        const positionNumComponents = 3;
-        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
-        const normalNumComponents = 3;
-        geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
-        const uvNumComponents = 2;
-        geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), uvNumComponents));
-        geometry.setIndex(indices);
-        geometry.computeBoundingSphere();
-
-        if (!mesh) {
-            mesh = new THREE.Mesh(geometry, this.material);
-            mesh.name = cellId;
-            this.cellIdToMesh[cellId] = mesh;
-            this.scene.add(mesh);
-            mesh.position.set(cellX * cellSize, cellY * cellSize);
-        }
-    }
     gizmo() {
         const ex = new THREE.ArrowHelper(new THREE.Vector3(2, 0, 0), new THREE.Vector3(0, 0, 0), 3, "#ff0000")
         const wy = new THREE.ArrowHelper(new THREE.Vector3(0, 2, 0), new THREE.Vector3(0, 0, 0), 3, "#00ff00")
@@ -151,12 +113,3 @@ export class Game {
     }
 }
 
-const neighborOffsets = [
-    [0, 0, 0], // self
-    [-1, 0, 0], // left
-    [1, 0, 0], // right
-    [0, -1, 0], // down
-    [0, 1, 0], // up
-    [0, 0, -1], // back
-    [0, 0, 1], // front
-];
