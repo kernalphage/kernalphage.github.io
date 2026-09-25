@@ -34,7 +34,18 @@ serve() {
     local port="${1:-8000}"
     echo "Serving ./www at http://localhost:${port}"
     cd "$(dirname "$0")/../www"
-    python3 -m http.server "${port}"
+
+    local python_cmd
+    if command -v python3 >/dev/null 2>&1; then
+        python_cmd="python3"
+    elif command -v python >/dev/null 2>&1; then
+        python_cmd="python"
+    else
+        echo "Error: neither python3 nor python found on PATH" >&2
+        exit 1
+    fi
+
+    "${python_cmd}" -m http.server "${port}"
 }
 
 watch() {
