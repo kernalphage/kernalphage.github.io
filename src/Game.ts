@@ -6,6 +6,7 @@ import { Globals } from './Globals';
 import { randInt } from 'three/src/math/MathUtils.js';
 import { Camera } from './Camera';
 import { SaveGame } from './SaveGame';
+import { Spritesheet } from './Spritesheet';
 const { cellSize } = Globals;
 
 export class Game {
@@ -42,7 +43,12 @@ export class Game {
         this.scene.add(new THREE.AmbientLight());
 
         const loader = new THREE.TextureLoader();
-        const texture = loader.load('resources/flourish-cc-by-nc-sa.png', () => requestAnimationFrame(this.render.bind(this)));
+        const texture = loader.load('resources/flourish-cc-by-nc-sa.png', (dat) => {
+            Globals.Spritesheet = new Spritesheet(16, dat.height, dat.width);
+            this.renderCells();
+            this.world.updateCellGeometry(0, 0);
+            requestAnimationFrame(this.render.bind(this))
+        });
         texture.magFilter = THREE.NearestFilter;
         texture.minFilter = THREE.NearestFilter;
         texture.colorSpace = THREE.LinearSRGBColorSpace;
@@ -54,9 +60,8 @@ export class Game {
             this.resizeCanvas();
         });
 
-        this.world = new  VoxelWorld(16, 256, 64, this.scene, this.material);
-        this.renderCells();
-        this.world.updateCellGeometry(0, 0);
+        this.world = new VoxelWorld(this.scene, this.material);
+        
         
         const components = [this.canvas, this.log_elem]
         this.log(components.every((e) => !!e) ? "All elements loaded" : components)
@@ -66,7 +71,7 @@ export class Game {
     }
 
     renderCells() {
-        let N = 4;
+        let N = 8;
         for (let q = -N; q <= N; q++) {
             const r1 = Math.max(-N, -q - N);
             const r2 = Math.min(N, -q + N);

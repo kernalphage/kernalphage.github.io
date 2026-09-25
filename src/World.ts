@@ -3,8 +3,11 @@ import { Hex, Layout } from './lib/kpHex';
 import Vic from './lib/vic';
 import { Globals } from './Globals';
 import { BufferMesh } from './BufferMesh';
+import _ from 'lodash';
+import kpFunctional from './lib/kpFunctional';
+import { util } from 'zod';
 export type Cell = number;
-const { cellSize } = Globals;
+const { cellSize, Spritesheet } = Globals;
 
 export type RayVoxelIntersection = {
     position: number[],
@@ -24,7 +27,6 @@ const hexCapIndices = [
 ]
 
 const HexFace: FaceData = {
-    uvRow: 1,
     corners: [...pts, new Vic(0, 0, 0)].map((pos) => {
         return ({
             pos: new Vic(pos.x, pos.y, 0), uv: [(pos.x * .5 - .5) + 1, (pos.y * .5 - .5)]
@@ -32,14 +34,31 @@ const HexFace: FaceData = {
     })
 }
 
+
+function hexGeo( hexX: number, hexY: number) {
+
+    const [positions, normals, uvs, indices]: number[][] = [[], [], [], []];
+
+    // TODO: maybe this should be abstracted to a "HexMesh"
+    const hexPos = Globals.layout.hexToPixel(new Hex(hexX, hexY));
+    const cellPos = new Vic(hexPos.x, hexPos.y, 0);
+
+    const { corners } = HexFace;
+    for (const { pos, uv } of corners) {
+        positions.push(pos.x + cellPos.x, pos.y + cellPos.y, pos.z + cellPos.z);
+        normals.push(0, 0, 1);
+        uvs.push(...uv);
+    }
+    indices.push(...hexCapIndices)
+
+    return { positions, normals, uvs, indices };
+}
+
 export default class VoxelWorld {
     cells: Record<string, Uint8Array>;
     readonly cellIdToMesh: Record<string, BufferMesh> = {};
 
     constructor(
-        readonly tileSize: number,
-        readonly tileTextureWidth: number,
-        readonly tileTextureHeight: number,
         readonly scene: THREE.Scene,
         readonly material: THREE.Material
     ) {
@@ -81,8 +100,6 @@ export default class VoxelWorld {
     }
 
     generateGeoForCell(x: number, y: number) {
-        const { tileSize, tileTextureWidth, tileTextureHeight } = this;
-
         const startX = x * cellSize;
         const startY = y * cellSize;
 
@@ -98,31 +115,25 @@ export default class VoxelWorld {
                 const voxelX = startX + x;
                 const voxel = this.getVoxel(voxelX, voxelY);
                 if (voxel) {
-
-                    // TODO: maybe this should be abstracted to a "HexMesh"
-                    const uvVoxel = voxel - 1;  // voxel 0 is sky so for UVs we start at 0
-                    const hexPos = Globals.layout.hexToPixel(new Hex(x, y));
-                    const cellPos = new Vic(hexPos.x, hexPos.y, 0);
-
-                    const { corners, uvRow } = HexFace;
                     const ndx = positions.length / 3;
-                    for (const { pos, uv } of corners) {
-                        positions.push(pos.x + cellPos.x, pos.y + cellPos.y, pos.z + cellPos.z);
-                        normals.push(0, 0, 1);
-                        uvs.push(
-                            (uvVoxel + uv[0]) * tileSize / tileTextureWidth,
-                            1 - (uvRow + uv[1]) * tileSize / tileTextureHeight);
-                    }
-                    indices.push(...hexCapIndices.map((i) => i + ndx))
+                    
+                    const voxelMesh = hexGeo(x, y);
+                    positions.push(...voxelMesh.positions);
+                    normals.push(...voxelMesh.normals);                    
+                    uvs.push(...kpFunctional.eachCons(voxelMesh.uvs, 2, 2).flatMap((uv) => 
+                        Spritesheet.uvs(voxel-1, uv)
+                    ));
+                    indices.push(...voxelMesh.indices.map((i) => i + ndx))
                 }
             }
         }
-        return {
+        let out = {
             positions,
             normals,
             indices,
             uvs
         };
+        return out;
     }
 
     getCellForVoxel(x: number, y: number): Uint8Array {
@@ -158,25 +169,24 @@ export default class VoxelWorld {
         cell[voxelOffset] = v;
     }
 
-        updateVoxelGeometry(x: number, y: number, z: number) {
-            const updatedCellIds: Record<string, boolean> = {};
-            for (const offset of neighborOffsets) {
-                const ox = x + offset[0];
-                const oy = y + offset[1];
-                const cellId = this.computeCellId(ox, oy);
-                if (!updatedCellIds[cellId]) {
-                    updatedCellIds[cellId] = true;
-                    this.updateCellGeometry(ox, oy);
-    
-                }
+    updateVoxelGeometry(x: number, y: number, z: number) {
+        const updatedCellIds: Record<string, boolean> = {};
+        for (const offset of neighborOffsets) {
+            const ox = x + offset[0];
+            const oy = y + offset[1];
+            const cellId = this.computeCellId(ox, oy);
+            if (!updatedCellIds[cellId]) {
+                updatedCellIds[cellId] = true;
+                this.updateCellGeometry(ox, oy);
+
             }
         }
+    }
 }
 
 
 type CellCornerData = { pos: Vic, uv: [number, number] }
 type FaceData = {
-    uvRow: number,
     corners: CellCornerData[],
 }
 
