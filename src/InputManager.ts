@@ -9,6 +9,11 @@ export const KeyCode = {
     TAB: "Tab",
     DELETE: "Delete",
 
+    UP: "ArrowUp",
+    DOWN: "ArrowDown",
+    LEFT: "ArrowLeft",
+    RIGHT: "ArrowRight",
+
     SHIFT: "ShiftLeft,ShiftRight",
     CONTROL: "ControlLeft,ControlRight",
     ALT: "AltLeft,AltRight",
@@ -27,7 +32,7 @@ export class InputManager {
 
     
 
-    public isKeyDown(key:string|number, modifiers:string[] = []) {
+    public isKeyDown(key: keyof typeof KeyCode | string|number, modifiers:string[] = []) {
         if(typeof key === 'number') {
             key = InputManager.MouseButton(key);
         }
