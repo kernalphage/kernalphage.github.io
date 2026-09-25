@@ -178,10 +178,10 @@ export default class KPFunctional {
 
   // from NPM each-cons
   // Take an n-sized sliding window of A: [0,1] [1,2] [2,3]
-  static eachCons<T>(a: T[], n: number): T[][] {
+  static eachCons<T>(a: T[], window: number, step:number = 1): T[][] {
     const r = [];
-    for (let i = 0; i < a.length - n + 1; i++) {
-      r.push(this.rangeSlice(a, i, n));
+    for (let i = 0; i < a.length - window + 1; i+= step) {
+      r.push(this.rangeSlice(a, i, window));
     }
     return r;
   }
