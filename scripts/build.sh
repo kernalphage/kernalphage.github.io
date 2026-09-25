@@ -21,10 +21,10 @@ build() {
     echo "Running build..."
 
     echo "Copying static files..."
-    rm -rf www/*
+    rm -r ../www/*
 
-    mkdir -p www
-    cp -r static/* www
+    mkdir -p ../www
+    cp -r static/* ../www
     
     echo "Building TypeScript..."
     yarn build
@@ -33,8 +33,8 @@ build() {
 serve() {
     local port="${1:-8000}"
     echo "Serving ./www at http://localhost:${port}"
-    cd "$(dirname "$0")/www"
-    python -m http.server "${port}"
+    cd "$(dirname "$0")/../www"
+    python3 -m http.server "${port}"
 }
 
 watch() {
