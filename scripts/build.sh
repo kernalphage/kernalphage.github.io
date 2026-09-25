@@ -20,14 +20,16 @@ EOF
 build() {
     echo "Running build..."
 
-    echo "Copying static files..."
-    rm -r ../www/*
+    local repo_root
+    repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 
-    mkdir -p ../www
-    cp -r static/* ../www
+    echo "Copying static files..."
+    [ -d "$repo_root/www" ] && rm -r "$repo_root/www"/*
+    mkdir -p "$repo_root/www"
+    cp -r "$repo_root/static"/* "$repo_root/www"
     
     echo "Building TypeScript..."
-    yarn build
+    (cd "$repo_root" && yarn build)
 }
 
 serve() {
