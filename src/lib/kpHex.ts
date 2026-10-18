@@ -331,6 +331,7 @@ export class Layout {
 
 
   // The corners of a hex - at least for pointy, this is clockwise starting NE
+  // Centered at zero
   public polygonCorners(h: Hex): Vic[] {
     const corners: Vic[] = [];
     const center: Vic = this.hexToPixel(h);

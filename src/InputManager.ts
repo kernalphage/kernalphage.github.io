@@ -27,6 +27,8 @@ export class InputManager {
     // mousePos.z accumulates scroll/pinch delta since the last update() call.
     // Positive means zoom out, negative means zoom in.
     public mousePos:Vic = new Vic();
+    // mouseMove accumulates the mouse movement delta since the last update() call.
+    public mouseMove:Vic = new Vic();
 
     private pinchDist: number | null = null;
 
@@ -105,6 +107,9 @@ export class InputManager {
 
 
     onMouseEvent(e:MouseEvent) {
+        this.mouseMove.x += e.movementX;
+        this.mouseMove.y += e.movementY;
+
         this.mousePos.x = e.clientX;
         this.mousePos.y = e.clientY;
 
@@ -129,8 +134,13 @@ export class InputManager {
 
     onTouchEvent(e:TouchEvent) {
         if (e.touches.length === 1) {
-            this.mousePos.x = e.touches[0].clientX;
-            this.mousePos.y = e.touches[0].clientY;
+            const touch = e.touches[0];
+            if (e.type === 'touchmove') {
+                this.mouseMove.x += touch.clientX - this.mousePos.x;
+                this.mouseMove.y += touch.clientY - this.mousePos.y;
+            }
+            this.mousePos.x = touch.clientX;
+            this.mousePos.y = touch.clientY;
             this.pinchDist = null;
         } else if (e.touches.length >= 2) {
             const dist = this.touchDist(e.touches);
@@ -165,6 +175,8 @@ export class InputManager {
     update() {
         this.keyPressed = new Set();
         this.mousePos.z = 0;
+        this.mouseMove.x = 0;
+        this.mouseMove.y = 0;
     }
 
 }

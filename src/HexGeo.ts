@@ -28,10 +28,12 @@ const hexCapIndices = [
     5, 0, 6,
 ]
 
+
+// Pos is a unit 'circle' centered around 0, uv is centered around 0.5, 0.5 
 const HexFace: FaceData = {
     corners: [...pts, new Vic(0, 0, 0)].map((pos) => {
         return ({
-            pos: new Vic(pos.x, pos.y, 0), uv: [(pos.x * .5 - .5) + 1, (pos.y * .5 - .5)]
+            pos: new Vic(pos.x, pos.y, 0), uv: [(pos.x * .5 + .5), (pos.y * .5 + .5)]
         })
     })
 }

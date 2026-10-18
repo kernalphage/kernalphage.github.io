@@ -11,7 +11,6 @@ const {InputManager, camera} = Globals;
 export class Camera {
     readonly camera;
 
-    readonly pos:Vic = new Vic(7,5)
     readonly vel = new Vic();
     readonly cameraSpeed = 0;
     private rect: DOMRect = new DOMRect();
@@ -20,7 +19,7 @@ export class Camera {
     private readonly maxViewSize = 60;
     private readonly zoomSpeed = 0.02;
 
-    constructor(private viewSize: number) {
+    constructor(private viewSize: number, readonly pos:Vic = new Vic(10,10)) {
         this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
     }
 
