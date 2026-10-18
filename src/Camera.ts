@@ -2,13 +2,14 @@
 
 import * as THREE from 'three';
 import Vic from './lib/vic';
-import { Globals} from './Globals';
+import { Globals } from './Globals';
 import { KeyCode } from './InputManager';
-const {InputManager, camera} = Globals;
+import { Entity } from './lib/Entity';
+const { InputManager, camera } = Globals;
 
 
 // Top-down view of an x/y tile grid 
-export class Camera {
+export class Camera implements Entity {
     readonly camera;
 
     readonly vel = new Vic();
@@ -19,25 +20,25 @@ export class Camera {
     private readonly maxViewSize = 60;
     private readonly zoomSpeed = 0.02;
 
-    constructor(private viewSize: number, readonly pos:Vic = new Vic(10,10)) {
+    constructor(private viewSize: number, readonly pos: Vic = new Vic(10, 10)) {
         this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
     }
 
-    update(dt:number, rect: DOMRect) {
+    update(dt: number) {
         let dirty = false;
-        if(InputManager.isKeyDown(KeyCode.UP)) {
+        if (InputManager.isKeyDown(KeyCode.UP)) {
             this.vel.y += camera.accell * dt;
             dirty = true;
         }
-        else if(InputManager.isKeyDown(KeyCode.DOWN)) {
+        else if (InputManager.isKeyDown(KeyCode.DOWN)) {
             this.vel.y -= camera.accell * dt;
             dirty = true;
         }
-        else if(InputManager.isKeyDown(KeyCode.LEFT)) {
+        else if (InputManager.isKeyDown(KeyCode.LEFT)) {
             this.vel.x -= camera.accell * dt;
             dirty = true;
         }
-        else if(InputManager.isKeyDown(KeyCode.RIGHT)) {
+        else if (InputManager.isKeyDown(KeyCode.RIGHT)) {
             this.vel.x += camera.accell * dt;
             dirty = true;
         }
@@ -45,7 +46,8 @@ export class Camera {
         this.vel.x = Math.max(Math.min(this.vel.x, camera.speed), -camera.speed);
         this.vel.y = Math.max(Math.min(this.vel.y, camera.speed), -camera.speed);
 
-        this.pos.addEquals(this.vel.mul(dt));
+        const zoomFactor = 1 - camera.zoomDamping * (1 - this.viewSize / this.maxViewSize);
+        this.pos.addEquals(this.vel.mul(dt * zoomFactor));
         this.vel.mulEquals(camera.friction);
 
         if (InputManager.mousePos.z !== 0) {
@@ -53,8 +55,6 @@ export class Camera {
             this.viewSize = Math.max(this.minViewSize, Math.min(this.maxViewSize, this.viewSize));
             InputManager.mousePos.z = 0;
         }
-
-        this.resizeCanvas(rect);
     }
 
 

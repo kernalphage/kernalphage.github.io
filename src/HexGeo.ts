@@ -1,4 +1,5 @@
 import { Globals } from "./Globals";
+import kpFunctional from "./lib/kpFunctional";
 import { Hex } from "./lib/kpHex";
 import Vic from "./lib/vic";
 
@@ -38,10 +39,10 @@ const HexFace: FaceData = {
     })
 }
 
+// A single instance of a hexagon 
+export function hexGeo(hexX: number, hexY: number, spriteIndex?: number | undefined) {
 
-export function hexGeo( hexX: number, hexY: number) {
-
-    const [positions, normals, uvs, indices]: number[][] = [[], [], [], []];
+    let [positions, normals, uvs, indices]: number[][] = [[], [], [], []];
 
     // TODO: maybe this should be abstracted to a "HexMesh"
     const hexPos = Globals.layout.hexToPixel(new Hex(hexX, hexY));
@@ -55,5 +56,11 @@ export function hexGeo( hexX: number, hexY: number) {
     }
     indices.push(...hexCapIndices)
 
+    // Reposition the uvs to the spritesheet if one is given
+    if (spriteIndex !== undefined) {
+        uvs = kpFunctional.eachCons(uvs, 2, 2).flatMap((uv) =>
+            Globals.Spritesheet.uvs(spriteIndex, uv)
+        )
+    }
     return { positions, normals, uvs, indices };
 }

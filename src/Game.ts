@@ -3,15 +3,15 @@
 import * as THREE from 'three';
 import VoxelWorld from './World';
 import { Globals } from './Globals';
-import { randInt } from 'three/src/math/MathUtils.js';
 import { Camera } from './Camera';
-import { SaveGame } from './SaveGame';
+import { SaveGame } from './saveState/SaveGame';
 import { Spritesheet } from './Spritesheet';
 import { Pointer } from './Pointer';
-import { Hex } from './lib/kpHex';
 import KPMath from './lib/kpMath';
-import { ThreeMFLoader } from 'three/examples/jsm/Addons.js';
 import Vic from './lib/vic';
+import { Entity } from './lib/Entity';
+import _ from 'lodash';
+import { v4 } from 'uuid';
 const { cellSize } = Globals;
 
 export class Game {
@@ -22,7 +22,7 @@ export class Game {
     readonly renderer: THREE.WebGLRenderer;
     readonly camera: Camera;
     private pointer: Pointer;
-    private world!: VoxelWorld
+    readonly entities: Record<string, Entity> = {}
 
     readonly save = new SaveGame();
 
@@ -48,23 +48,26 @@ export class Game {
 
         this.scene = new THREE.Scene();
         this.scene.add(new THREE.AmbientLight());
-        this.scene.add(this.pointer.ptr.mesh);
 
         this.gizmo();
-        this.resizeCanvas();
-        window.addEventListener('resize', () => {
-            this.resizeCanvas();
-        });
 
         Globals.Spritesheet = new Spritesheet(512, 'Hexsprites', () => {
-            this.world = new VoxelWorld(this.scene, Globals.Spritesheet.material);
+            Globals.game = this;
+            Globals.world = new VoxelWorld(this.scene, Globals.Spritesheet.material);
             THREE.MathUtils.seededRandom(KPMath.seedToInt(this.save.state.seed, "WORLDGEN"))
             this.renderCells();
-            this.world.updateCellGeometry(0, 0);
+            Globals.world.updateCellGeometry(0, 0);
 
+            this.resizeCanvas();
+            window.addEventListener('resize', () => {
+                this.resizeCanvas();
+            });
             requestAnimationFrame(this.render.bind(this))
         });
 
+
+        this.registerEntity(this.camera, "Camera");
+        this.registerEntity(this.pointer, "Pointer");
 
         const components = [this.canvas, this.log_elem]
         this.log(components.every((e) => !!e) ? "All elements loaded" : components)
@@ -75,11 +78,11 @@ export class Game {
 
     renderCells() {
         let N = cellSize;
-        
+
         for (let x = 0; x < N; x++) {
             for (let y = 0; y < N; y++) {
                 let color = 1 + Math.floor(THREE.MathUtils.seededRandom() * 3);
-                this.world.setVoxel(x, y, color);
+                Globals.world.setVoxel(x, y, color);
             }
         }
     }
@@ -87,26 +90,33 @@ export class Game {
     resizeCanvas() {
         const rect = this.canvas.getBoundingClientRect();
         this.renderer.setSize(rect.width, rect.height, false);
-
-        this.render(0);
+        this.camera.resizeCanvas(rect);
     }
 
     render(time: number) {
         let dt = time - this.curTick;
         this.curTick = time;
 
-        const rect = this.canvas.getBoundingClientRect();
-        this.camera.update(dt, rect);
-        this.pointer.update(dt);
-
-        this.renderer.render(this.scene, this.camera.camera);
+        _.forEach(this.entities, (e) => {
+            e.update(dt);
+        })
 
         Globals.InputManager.update();
+
+        const rect = this.canvas.getBoundingClientRect();
+        this.camera.resizeCanvas(rect);
+        this.renderer.render(this.scene, this.camera.camera);
+
         requestAnimationFrame(this.render.bind(this))
     }
 
 
-
+    registerEntity(entity: Entity, key: string = v4()) {
+        this.entities[key] = entity;
+        if (entity.mesh) {
+            this.scene.add(entity.mesh);
+        }
+    }
 
     gizmo() {
         const ex = new THREE.ArrowHelper(new THREE.Vector3(2, 0, 0), new THREE.Vector3(0, 0, 0), 3, "#ff0000")

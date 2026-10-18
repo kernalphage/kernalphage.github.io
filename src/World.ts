@@ -79,13 +79,11 @@ export default class VoxelWorld {
                 const voxel = this.getVoxel(voxelX, voxelY);
                 if (voxel) {
                     const ndx = positions.length / 3;
-                    
-                    const voxelMesh = hexGeo(x, y);
+
+                    const voxelMesh = hexGeo(x, y, voxel - 1);
                     positions.push(...voxelMesh.positions);
-                    normals.push(...voxelMesh.normals);                    
-                    uvs.push(...kpFunctional.eachCons(voxelMesh.uvs, 2, 2).flatMap((uv) => 
-                        Globals.Spritesheet.uvs(voxel-1, uv)
-                    ));
+                    normals.push(...voxelMesh.normals);
+                    uvs.push(...voxelMesh.uvs);
                     indices.push(...voxelMesh.indices.map((i) => i + ndx))
                 }
             }

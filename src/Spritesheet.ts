@@ -1,6 +1,16 @@
 import * as THREE from 'three';
 import { SpritesheetLayout, SpriteSourceSizeClass } from './SpritesheetLayout';
 
+export enum SpriteConstants {
+    Earth = 1,
+    Grass,
+    Water,
+    Miner,
+    Tree,
+
+    Conveyor = 8,
+}
+
 export class Spritesheet {
     readonly material!: THREE.Material;
     private tileTextureWidth!: number;
@@ -10,7 +20,7 @@ export class Spritesheet {
     constructor(
         readonly tileSize: number,
         readonly spriteSheet: string,
-        onReady: () => void 
+        onReady: () => void
     ) {
         fetch(`resources/${this.spriteSheet}.json`)
             .then((res) => {
@@ -18,7 +28,6 @@ export class Spritesheet {
                 return res.json() as Promise<SpritesheetLayout>;
             })
             .then((layout) => {
-                console.log({layout}, "LAYOUT FETCHED")
                 this.layout = layout;
                 this.loadTexture(onReady);
             });
@@ -46,7 +55,7 @@ export class Spritesheet {
         });
     }
 
-    sheetToUVSpace(size:SpriteSourceSizeClass): SpriteSourceSizeClass {
+    sheetToUVSpace(size: SpriteSourceSizeClass): SpriteSourceSizeClass {
         return {
             w: size.w / this.tileTextureWidth,
             h: size.h / this.tileTextureHeight,

@@ -11,6 +11,13 @@ export class Hex {
     if (Math.round(q + r + s) !== 0) throw 'q + r + s must be 0';
   }
 
+  public equals(b: Hex, round: boolean = false): boolean {
+    if (round) {
+      return this.round().equals(b.round(), false);
+    }
+    return this.q === b.q && this.r == b.r;
+  }
+
   public add(b: Hex): Hex {
     return new Hex(this.q + b.q, this.r + b.r, this.s + b.s);
   }
@@ -312,7 +319,7 @@ export class Layout {
   public pixelToHex(p: Vic): Hex {
     const M: Orientation = this.orientation;
 
-    const pt: Vic = new Vic(p.x,p.y);
+    const pt: Vic = new Vic(p.x, p.y);
     const q: number = M.b0 * pt.x + M.b1 * pt.y;
     const r: number = M.b2 * pt.x + M.b3 * pt.y;
     return new Hex(q, r, -q - r).round();

@@ -1,10 +1,19 @@
 import * as z from "zod";
 import { v4 } from "uuid";
+import { Inventory } from "../Inventory";
 
 export const SaveStateV1 = z.object({
     version: z.literal(1),
     timesOpened: z.number().default(0),
-    seed: z.uuid().default(() => v4())
+    seed: z.uuid().default(() => v4()),
+    inventory: z.object({
+        wood: z.number(),
+    }).default(() => ({
+        wood: 10
+    })),
+    buildings: z.record(
+        z.string(), z.string()
+    ).default(() => ({}))
 });
 
 export type SaveStateV1_T = z.infer<typeof SaveStateV1>
