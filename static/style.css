@@ -72,3 +72,6 @@ article {
         flex: 1;
     }
 }
+#main_game {
+    touch-action: none; /* disable native pinch-zoom/pan; InputManager handles touch */
+}

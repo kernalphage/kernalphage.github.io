@@ -8,6 +8,10 @@ import { Camera } from './Camera';
 import { SaveGame } from './SaveGame';
 import { Spritesheet } from './Spritesheet';
 import { Pointer } from './Pointer';
+import { Hex } from './lib/kpHex';
+import KPMath from './lib/kpMath';
+import { ThreeMFLoader } from 'three/examples/jsm/Addons.js';
+import Vic from './lib/vic';
 const { cellSize } = Globals;
 
 export class Game {
@@ -17,7 +21,7 @@ export class Game {
     readonly scene: THREE.Scene;
     readonly renderer: THREE.WebGLRenderer;
     readonly camera: Camera;
-    private pointer:Pointer;
+    private pointer: Pointer;
     private world!: VoxelWorld
 
     readonly save = new SaveGame();
@@ -36,7 +40,7 @@ export class Game {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         // renderer.setAnimationLoop(animate);
 
-        this.camera = new Camera(20);
+        this.camera = new Camera(10, new Vic(cellSize, cellSize));
         Globals.activeCamera = this.camera;
 
         this.pointer = new Pointer();
@@ -45,18 +49,19 @@ export class Game {
         this.scene = new THREE.Scene();
         this.scene.add(new THREE.AmbientLight());
         this.scene.add(this.pointer.ptr.mesh);
-        
+
         this.gizmo();
         this.resizeCanvas();
         window.addEventListener('resize', () => {
             this.resizeCanvas();
         });
 
-        Globals.Spritesheet = new Spritesheet(16, () => {
+        Globals.Spritesheet = new Spritesheet(512, 'Hexsprites', () => {
             this.world = new VoxelWorld(this.scene, Globals.Spritesheet.material);
+            THREE.MathUtils.seededRandom(KPMath.seedToInt(this.save.state.seed, "WORLDGEN"))
             this.renderCells();
             this.world.updateCellGeometry(0, 0);
-        
+
             requestAnimationFrame(this.render.bind(this))
         });
 
@@ -69,13 +74,12 @@ export class Game {
     }
 
     renderCells() {
-        let N = 8;
-        for (let q = -N; q <= N; q++) {
-            const r1 = Math.max(-N, -q - N);
-            const r2 = Math.min(N, -q + N);
-            for (let r = r1; r <= r2; r++) {
-                let color = randInt(1, 5);
-                this.world.setVoxel(q + 4, r + 4, color);
+        let N = cellSize;
+        
+        for (let x = 0; x < N; x++) {
+            for (let y = 0; y < N; y++) {
+                let color = 1 + Math.floor(THREE.MathUtils.seededRandom() * 3);
+                this.world.setVoxel(x, y, color);
             }
         }
     }
@@ -87,15 +91,17 @@ export class Game {
         this.render(0);
     }
 
-    render(time:number) {
+    render(time: number) {
         let dt = time - this.curTick;
         this.curTick = time;
-        
+
         const rect = this.canvas.getBoundingClientRect();
         this.camera.update(dt, rect);
         this.pointer.update(dt);
 
         this.renderer.render(this.scene, this.camera.camera);
+
+        Globals.InputManager.update();
         requestAnimationFrame(this.render.bind(this))
     }
 

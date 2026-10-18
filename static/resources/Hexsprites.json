@@ -1,0 +1,282 @@
+{
+  "frames" : {
+    "Hexsprites 0" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 0",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 0,
+        "y" : 0
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 1" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 1",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 1792,
+        "y" : 0
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 2" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 2",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 3584,
+        "y" : 0
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 3" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 3",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 5376,
+        "y" : 0
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 4" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 4",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 0,
+        "y" : 1792
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 5" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 5",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 1792,
+        "y" : 1792
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 6" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 6",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 3584,
+        "y" : 1792
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 7" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 7",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 5376,
+        "y" : 1792
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 8" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 8",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 0,
+        "y" : 3584
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 9" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 9",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 1792,
+        "y" : 3584
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 10" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 10",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 3584,
+        "y" : 3584
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    },
+    "Hexsprites 11" : {
+      "duration" : 100,
+      "filename" : "Hexsprites 11",
+      "frame" : {
+        "h" : 1792,
+        "w" : 1792,
+        "x" : 5376,
+        "y" : 3584
+      },
+      "rotated" : false,
+      "sourceSize" : {
+        "h" : 256,
+        "w" : 256
+      },
+      "spriteSourceSize" : {
+        "h" : 256,
+        "w" : 256,
+        "x" : 0,
+        "y" : 0
+      },
+      "trimmed" : false
+    }
+  },
+  "meta" : {
+    "app" : "Pixquare",
+    "format" : "RGBA888",
+    "frameTags" : [
+
+    ],
+    "image" : "Hexsprites.png",
+    "scale" : 7,
+    "size" : {
+      "h" : 7168,
+      "w" : 7168
+    },
+    "version" : "2.72.0"
+  }
+}

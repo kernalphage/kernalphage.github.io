@@ -144,6 +144,27 @@ export default class KPMath {
     return ((a % b) + b) % b;
   }
 
+  /**
+   * FNV-1a hash of `uuid` and `salt`
+   * @returns an unsigned 32-bit integer; the same inputs always give the same output
+   */
+  static seedToInt(uuid: string, salt: string | number = ''): number {
+    const text = `${uuid}:${salt}`;
+    let hash = 0x81_1c_9d_c5;
+    for (let i = 0; i < text.length; i++) {
+      hash ^= text.charCodeAt(i);
+      hash = Math.imul(hash, 0x01_00_01_93);
+    }
+    return hash >>> 0;
+  }
+
+  /**
+   * @returns a float in [0, 1), derived from `uuid` and `salt`
+   */
+  static seedToFloat(uuid: string, salt: string | number = ''): number {
+    return KPMath.seedToInt(uuid, salt) / 0x1_00_00_00_00;
+  }
+
   static toRadians(degrees: number) {
     return (Math.PI * degrees) / 180;
   }

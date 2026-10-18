@@ -9,8 +9,8 @@ import type { Camera } from "./Camera";
 import { LazyLoaded } from "./lib/LazyLoaded";
 
 class GlobalsImpl {
-    layout = new Layout(Layout.pointy);
-    cellSize = 16;
+    layout = new Layout(Layout.flat);
+    cellSize = 32;
     InputManager = new InputManager();
 
     camera = {
