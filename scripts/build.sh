@@ -24,12 +24,19 @@ build() {
     repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 
     echo "Copying static files..."
-    [ -d "$repo_root/www" ] && rm -r "$repo_root/www"/*
-    mkdir -p "$repo_root/www"
-    cp -r "$repo_root/static"/* "$repo_root/www"
-    
+    rm -rf "$repo_root/www"
+    mkdir -p "$repo_root/www" || return 1
+    cp -r "$repo_root/static"/* "$repo_root/www" || {
+        echo "Error: failed to copy static files" >&2
+        return 1
+    }
+
     echo "Building TypeScript..."
-    (cd "$repo_root" && yarn build)
+    (cd "$repo_root" && yarn build) || {
+        local status=$?
+        echo "Error: 'yarn build' failed with exit code $status" >&2
+        return "$status"
+    }
 }
 
 serve() {
@@ -127,7 +134,7 @@ while [ $# -gt 0 ]; do
 done
 
 if [ "$BUILD" = true ]; then
-    build
+    build || exit $?
 fi
 
 if [ "$WATCH" = true ] && [ "$SERVE" = true ]; then

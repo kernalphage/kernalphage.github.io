@@ -1,6 +1,5 @@
 import * as z from "zod";
 import { v4 } from "uuid";
-import { Inventory } from "../Inventory";
 
 export const SaveStateV1 = z.object({
     version: z.literal(1),

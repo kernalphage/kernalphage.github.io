@@ -38,7 +38,12 @@ jobs:
           yarn install --frozen-lockfile
       - name: Run build script
         run: |
-          ./scripts/build.sh --build
+          set -euo pipefail
+          if ! ./scripts/build.sh --build; then
+            status=$?
+            echo "::error title=Build failed::scripts/build.sh --build exited with code $status"
+            exit "$status"
+          fi
         shell: bash
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
