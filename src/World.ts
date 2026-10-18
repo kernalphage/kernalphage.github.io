@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import { Material, MathUtils, Scene } from 'three';
 import { Hex, Layout } from './lib/kpHex';
 import Vic from './lib/vic';
 import { Globals } from './Globals';
@@ -22,8 +22,8 @@ export default class VoxelWorld {
     readonly cellIdToMesh: Record<string, BufferMesh> = {};
 
     constructor(
-        readonly scene: THREE.Scene,
-        readonly material: THREE.Material
+        readonly scene: Scene,
+        readonly material: Material
     ) {
         this.cells = {};
     }
@@ -57,8 +57,8 @@ export default class VoxelWorld {
     }
 
     computeVoxelOffset(x: number, y: number) {
-        const voxelX = THREE.MathUtils.euclideanModulo(x, cellSize) | 0;
-        const voxelY = THREE.MathUtils.euclideanModulo(y, cellSize) | 0;
+        const voxelX = MathUtils.euclideanModulo(x, cellSize) | 0;
+        const voxelY = MathUtils.euclideanModulo(y, cellSize) | 0;
         return voxelY * cellSize + voxelX;
     }
 

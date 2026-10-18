@@ -1,6 +1,6 @@
 
 
-import * as THREE from 'three';
+import { OrthographicCamera, Vector3 } from 'three';
 import Vic from './lib/vic';
 import { Globals } from './Globals';
 import { KeyCode } from './InputManager';
@@ -21,7 +21,7 @@ export class Camera implements Entity {
     private readonly zoomSpeed = 0.02;
 
     constructor(private viewSize: number, readonly pos: Vic = new Vic(10, 10)) {
-        this.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
+        this.camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
     }
 
     update(dt: number) {
@@ -76,7 +76,7 @@ export class Camera implements Entity {
             this.camera.bottom = -halfSize / aspect;
         }
 
-        const center = new THREE.Vector3(...this.pos.toArray());
+        const center = new Vector3(...this.pos.toArray());
         this.camera.position.set(center.x, center.y, center.z + 20);
         this.camera.up.set(0, 1, 0);
         this.camera.lookAt(center);

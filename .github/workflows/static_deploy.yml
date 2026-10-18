@@ -39,9 +39,9 @@ jobs:
       - name: Run build script
         run: |
           set -euo pipefail
-          if ! ./scripts/build.sh --build; then
+          if ! ./scripts/build.sh --release; then
             status=$?
-            echo "::error title=Build failed::scripts/build.sh --build exited with code $status"
+            echo "::error title=Build failed::scripts/build.sh --release exited with code $status"
             exit "$status"
           fi
         shell: bash

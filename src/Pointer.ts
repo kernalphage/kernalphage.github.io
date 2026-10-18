@@ -1,7 +1,7 @@
 import { Mesh } from "three";
 import { BufferMesh } from "./BufferMesh";
 import { hexGeo } from "./HexGeo";
-import * as THREE from 'three';
+import { MeshBasicMaterial } from 'three';
 import { Globals } from "./Globals";
 import { Hex } from "./lib/kpHex";
 import { SpriteConstants } from "./Spritesheet";
@@ -14,12 +14,12 @@ export const C_blocked = 0xff0000
 export class Pointer {
     ptr: BufferMesh;
     mesh: Mesh;
-    material: THREE.MeshBasicMaterial;
+    material: MeshBasicMaterial;
 
     prevCell: Hex;
 
     constructor() {
-        this.material = new THREE.MeshBasicMaterial({ color: C_placeable, wireframe: true });
+        this.material = new MeshBasicMaterial({ color: C_placeable, wireframe: true });
         this.ptr = new BufferMesh("pointer", hexGeo(0, 0), this.material);
         this.prevCell = new Hex(0, 0);
         this.mesh = this.ptr.mesh;

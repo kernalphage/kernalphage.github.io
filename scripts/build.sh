@@ -6,10 +6,11 @@
 
 usage() {
     cat <<EOF
-Usage: $0 [--build] [--watch] [--serve [PORT]] [--help]
+Usage: $0 [--build] [--release] [--watch] [--serve [PORT]] [--help]
 
 Options:
   --build       run build steps
+  --release     run build steps with a minified bundle (implies --build)
   --watch       watch src/ and static/ directories and rebuild on changes
   --serve       start a basic Python HTTP server serving ./www
   PORT          optional port for --serve (default: 8000)
@@ -18,7 +19,9 @@ EOF
 }
 
 build() {
-    echo "Running build..."
+    local mode="dev"
+    [ "$RELEASE" = true ] && mode="release"
+    echo "Running build ($mode)..."
 
     local repo_root
     repo_root="$(cd "$(dirname "$0")/.." && pwd)"
@@ -31,10 +34,37 @@ build() {
         return 1
     }
 
-    echo "Building TypeScript..."
+    echo "Copying three.js..."
+    mkdir -p "$repo_root/www/vendor" || return 1
+    cp "$repo_root"/node_modules/three/build/three.{module,core}.min.js "$repo_root/www/vendor" || {
+        echo "Error: failed to copy three.js (is it installed?)" >&2
+        return 1
+    }
+
+    echo "Type checking..."
     (cd "$repo_root" && yarn build) || {
         local status=$?
-        echo "Error: 'yarn build' failed with exit code $status" >&2
+        echo "Error: type check failed with exit code $status" >&2
+        return "$status"
+    }
+
+    # three is external: it is loaded separately via the import map in index.html
+    local esbuild_args=(
+        src/index.ts
+        --bundle
+        --external:three
+        --format=esm
+        --platform=browser
+        --outfile=www/index.js
+    )
+    if [ "$RELEASE" = true ]; then
+        esbuild_args+=(--minify --legal-comments=none)
+    fi
+
+    echo "Bundling..."
+    (cd "$repo_root" && yarn esbuild "${esbuild_args[@]}") || {
+        local status=$?
+        echo "Error: esbuild failed with exit code $status" >&2
         return "$status"
     }
 }
@@ -97,6 +127,7 @@ if [ $# -eq 0 ]; then
 fi
 
 BUILD=false
+RELEASE=false
 WATCH=false
 SERVE=false
 SERVE_PORT=8000
@@ -105,6 +136,12 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --build)
             BUILD=true
+            shift
+            ;;
+
+        --release)
+            BUILD=true
+            RELEASE=true
             shift
             ;;
 

@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { DoubleSide, LinearSRGBColorSpace, Material, MeshBasicMaterial, NearestFilter, TextureLoader } from 'three';
 import { SpritesheetLayout, SpriteSourceSizeClass } from './SpritesheetLayout';
 
 export enum SpriteConstants {
@@ -12,7 +12,7 @@ export enum SpriteConstants {
 }
 
 export class Spritesheet {
-    readonly material!: THREE.Material;
+    readonly material!: Material;
     private tileTextureWidth!: number;
     private tileTextureHeight!: number
     private layout!: SpritesheetLayout
@@ -34,19 +34,19 @@ export class Spritesheet {
     }
 
     private loadTexture(onReady: () => void) {
-        const loader = new THREE.TextureLoader();
+        const loader = new TextureLoader();
 
         loader.load(`resources/${this.layout.meta.image}`, (texture) => {
             this.tileTextureWidth = texture.width;
             this.tileTextureHeight = texture.height;
 
-            texture.magFilter = THREE.NearestFilter;
-            texture.minFilter = THREE.NearestFilter;
-            texture.colorSpace = THREE.LinearSRGBColorSpace;
+            texture.magFilter = NearestFilter;
+            texture.minFilter = NearestFilter;
+            texture.colorSpace = LinearSRGBColorSpace;
 
-            (this as any).material = new THREE.MeshBasicMaterial({
+            (this as any).material = new MeshBasicMaterial({
                 map: texture,
-                side: THREE.DoubleSide,
+                side: DoubleSide,
                 alphaTest: 0.1,
                 transparent: false
             });
